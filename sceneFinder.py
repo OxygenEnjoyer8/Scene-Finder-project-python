@@ -20,7 +20,19 @@ searchDict = {}
 for b, child in enumerate(root[0]):
     searchOptions.append(child.tag)
     searchDict[b] = child.tag
+
+#get all the unique values for each search option:
+actualVals = {}
+for h, option in enumerate(searchOptions):
+    vals = set()
+    for scene in root:
+        for child in scene:
+            if child.tag == option:
+                vals.add(child.text)
+    #actualVals.append(vals)
+    actualVals[h] = vals
     
+print(actualVals)
 #print(searchOptions)
 
 
@@ -32,19 +44,28 @@ def searchScenes(searchVal):
     
     if searchVal.isdigit():
         searchVal = int(searchVal)
-        if searchVal in searchDict:
-                actualSearchOption = searchDict[searchVal]
+        #if searchVal in searchDict:
+                #actualSearchOption = searchDict[searchVal]
+        if searchVal in actualVals:
+            print("Search categories are: "+str(actualVals[searchVal]))
+            return None
         else:
             print("Invalid search option")
             return foundScenes
+        return None
+        #return actualSearchOption
     else:
         
-        for s in searchDict.values():
+        for s in actualVals.values():
             print("S is: "+s)
             if s.lower() in searchVal or searchVal in s.lower():
-                print("Valid search option:")
+                
+                print("Search for: "+s)
                 actualSearchOption = s
-                break
+                return actualSearchOption
+        
+        
+        
             
     
     
@@ -57,7 +78,7 @@ def searchScenes(searchVal):
 
 while True:
     print("-----------------------")
-    print("Please pick a search option: (name or index number)")
+    print("Please pick a search option. Enter a number to list search categories, or type a search term to search scenes directly.")
     
     print("The possible search options for this scene database are:")
     for i, option in searchDict.items():
@@ -76,7 +97,8 @@ while True:
     print("You entered: " + searchOption)
     
     searchParent = searchScenes(searchOption)
-    print("searching for: "+searchParent)
+    if searchParent is not None:
+        print("searching for: "+searchParent)
     break
 
     
