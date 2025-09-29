@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 
 
 #load the scene XML file
-tree = ET.parse('sceneList.xml')
+tree = ET.parse('sceneDatabase.xml')
 root = tree.getroot()
 #scenes = root.findall('scene')
 #genres = scenes.find('genre')
@@ -35,19 +35,25 @@ for h, option in enumerate(searchOptions):
 print(actualVals)
 #print(searchOptions)
 
+searchInCategory = False
+searchIndex = -1
 
-    
 def searchScenes(searchVal):
     foundScenes = []
     searchVal = searchVal.lower()
     actualSearchOption = ""
+    global searchInCategory, searchIndex
     
-    if searchVal.isdigit():
+    
+    if searchVal.isdigit() and not searchInCategory:
+        
         searchVal = int(searchVal)
         #if searchVal in searchDict:
                 #actualSearchOption = searchDict[searchVal]
         if searchVal in actualVals:
             print("Search categories are: "+str(actualVals[searchVal]))
+            searchInCategory = True
+            searchIndex = searchVal
             return None
         else:
             print("Invalid search option")
@@ -55,15 +61,21 @@ def searchScenes(searchVal):
         return None
         #return actualSearchOption
     else:
+        foundList = []
+        print("Searching for: "+searchVal)
+        #search for actual values in the sets:
         
-        for s in actualVals.values():
-            print("S is: "+s)
-            if s.lower() in searchVal or searchVal in s.lower():
-                
-                print("Search for: "+s)
-                actualSearchOption = s
-                return actualSearchOption
-        
+        for s in actualVals[searchIndex]:
+            
+            #print("Checking set: "+str(s))
+            #print("S is: "+str(s))
+                if s.lower() in searchVal or searchVal in s.lower():
+                    
+                    #print(": "+s)
+                    #actualSearchOption = s     
+                    foundList.append(s)
+                    return foundList
+            
         
         
             
@@ -97,8 +109,11 @@ while True:
     print("You entered: " + searchOption)
     
     searchParent = searchScenes(searchOption)
-    if searchParent is not None:
+    if isinstance(searchParent, list):
+        print("Scene names of the search query are: "+str(searchParent))
+    elif searchParent is not None:
         print("searching for: "+searchParent)
-    break
+        
+    
 
     
